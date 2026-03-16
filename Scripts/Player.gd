@@ -5,16 +5,19 @@ extends CharacterBody3D
 @export var camera: Camera3D
 @onready var mesh: MeshInstance3D = $mesh
 
+#region Movement
 const JUMP_VELOCITY = 4.5
+var speed = 2.5
 
-var SPEED = 2.5
+var do_dash = false;
+var can_dash = true;
+var dash_duration = 0.2
+var dash_cooldown = 2.0
 
-var walking_speed = 3.0
-var running_speed = 5.0
+var direction_blend_speed = 30.0;
+#endregion
 
-var direction_blend_speed = 10.0;
-
-# Camera
+#region Camera
 const CAMERA_ZOOM_SPEED = 0.1;
 var min_camera_zoom = 4;
 var max_camera_zoom = 8;
@@ -22,21 +25,26 @@ var min_camera_angle = deg_to_rad(-40);
 var max_camera_angle = deg_to_rad(20);
 var angle_fix_speed = 3;
 
-# Health
+@export var sens_horizontal = 0.3;
+@export var sens_vertical = 0.3
+#endregion
+
+#region Health
 const MAX_HEALTH = 30;
 var current_health = 0;
+#endregion
 
-# Combat
+#region Combat
 const ATTACK_DISTANCE = 2;
 
 var damage = 10;
 var next_attack = 0;
 var attack_cooldown = 1;
+#endregion
 
+#region References
 @export var enemy : CharacterBody3D;
-
-@export var sens_horizontal = 0.3;
-@export var sens_vertical = 0.3
+#endregion
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED;
@@ -66,19 +74,12 @@ func _physics_process(delta: float) -> void:
 	# Camera clamping smooths between values
 	clamp_and_smooth_camera(delta);
 	
-	# Sprinting
-	if (Input.is_action_pressed("run")):
-		SPEED = running_speed;
-	else:
-		SPEED = walking_speed;
-	
 	# Add the gravity.
 	if not is_on_floor():
 		velocity += get_gravity() * delta
-
-	# Handle jump.
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
-		velocity.y = JUMP_VELOCITY
+		
+	if Input.is_action_just_pressed("dash") and can_dash:
+		dash();
 
 	set_velocity_and_direction(delta);
 	
@@ -98,15 +99,20 @@ func set_velocity_and_direction(delta):
 	# As good practice, you should replace UI actions with custom gameplay actions.
 	var input_dir := Input.get_vector("left", "right", "forward", "backward")
 	var direction := (camera_pivot.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	if direction:
+	
+	if do_dash:
+		var dash_direction = mesh.transform.basis.z.normalized();
+		velocity = -dash_direction * speed * 5;
+		velocity.y = 0;
+	elif direction:
 		var target_transform = Transform3D.IDENTITY.looking_at(direction, Vector3.UP);
 		mesh.basis = mesh.basis.slerp(target_transform.basis, direction_blend_speed * delta);
 		
-		velocity.x = direction.x * SPEED
-		velocity.z = direction.z * SPEED
+		velocity.x = direction.x * speed;
+		velocity.z = direction.z * speed;
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
+		velocity.x = move_toward(velocity.x, 0, speed);
+		velocity.z = move_toward(velocity.z, 0, speed);
 
 func clamp_and_smooth_camera(delta):
 	var t = inverse_lerp(min_camera_zoom, max_camera_zoom, camera.position.z);
@@ -118,6 +124,18 @@ func clamp_and_smooth_camera(delta):
 	
 	camera_mount.rotation.x = clamp(camera_mount.rotation.x, min_camera_angle, max_camera_angle);
 	
+func dash():
+	can_dash = false
+	do_dash = true
+	
+	await get_tree().create_timer(dash_duration).timeout;
+	
+	do_dash = false
+	
+	await get_tree().create_timer(dash_cooldown).timeout;
+	
+	can_dash = true;
+
 func take_damage(damage: float):
 	current_health -= damage;
 	current_health = clamp(current_health, 0, MAX_HEALTH);

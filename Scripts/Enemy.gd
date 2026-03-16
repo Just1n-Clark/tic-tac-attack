@@ -1,6 +1,6 @@
 extends CharacterBody3D
 
-const SPEED = 5.0
+const SPEED = 2.5
 const ATTACK_DISTANCE = 2;
 
 var attack_cooldown = 1;

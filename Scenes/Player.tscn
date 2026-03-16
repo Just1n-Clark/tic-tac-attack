@@ -8,7 +8,7 @@
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_c1w88"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kyqiw"]
-albedo_color = Color(0.30588236, 1, 1, 1)
+albedo_color = Color(0.79607844, 0.23529412, 0, 1)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_kyqiw"]
 material = SubResource("StandardMaterial3D_kyqiw")
@@ -27,7 +27,7 @@ mesh = SubResource("CapsuleMesh_c1w88")
 transform = Transform3D(0.15, 0, 0, 0, 0.15, 0, 0, 0, 0.15, 0, 0.77351165, 0)
 
 [node name="glasses" type="MeshInstance3D" parent="mesh" unique_id=1635292212]
-transform = Transform3D(0.2, 0, 0, 0, -8.742278e-09, 0.2, 0, -0.2, -8.742278e-09, 0, 0.41114247, -0.45244896)
+transform = Transform3D(0.2, 0, 0, 0, -8.742278e-09, 0.2, 0, -0.2, -8.742278e-09, 0, 0.41114247, -0.32695615)
 mesh = SubResource("CylinderMesh_kyqiw")
 
 [node name="camera_pivot" type="Node3D" parent="." unique_id=1672161022]
