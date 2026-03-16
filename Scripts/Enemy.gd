@@ -53,4 +53,5 @@ func take_damage(damage: float):
 		
 func die():
 	print("Enemy died!");
+	Global.add_score(10);
 	queue_free();

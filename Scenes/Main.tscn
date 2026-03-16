@@ -7,7 +7,8 @@
 [ext_resource type="Texture2D" uid="uid://lk3bjp4lr7f0" path="res://Textures/Green/texture_09.png" id="4_v1gob"]
 [ext_resource type="Texture2D" uid="uid://dl65ifwkj3l5j" path="res://Textures/Red/texture_09.png" id="5_jw32o"]
 [ext_resource type="PackedScene" uid="uid://dux45emmw4r5y" path="res://Scenes/Player.tscn" id="6_v1gob"]
-[ext_resource type="Script" uid="uid://uqkcsmispwdv" path="res://Scenes/HealthBar.gd" id="8_50glp"]
+[ext_resource type="Script" uid="uid://uqkcsmispwdv" path="res://Scripts/HealthBar.gd" id="8_50glp"]
+[ext_resource type="Script" uid="uid://dd84fp7d8hpb7" path="res://Scripts/ScoreDisplay.gd" id="9_vy5pj"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_pbw6q"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -49,6 +50,8 @@ albedo_texture = ExtResource("4_v1gob")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bmxlf"]
 albedo_texture = ExtResource("5_jw32o")
+
+[sub_resource type="LabelSettings" id="LabelSettings_50glp"]
 
 [node name="Main" type="Node3D" unique_id=256694422]
 
@@ -124,3 +127,20 @@ grow_horizontal = 2
 grow_vertical = 0
 script = ExtResource("8_50glp")
 player = NodePath("../../Player")
+
+[node name="score_display" type="Label" parent="CanvasLayer" unique_id=1663559404]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -30.5
+offset_top = -73.0
+offset_right = 30.5
+offset_bottom = -50.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Score: 0"
+label_settings = SubResource("LabelSettings_50glp")
+horizontal_alignment = 1
+script = ExtResource("9_vy5pj")
