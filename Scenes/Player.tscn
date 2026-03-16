@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://dux45emmw4r5y"]
+
+[ext_resource type="Script" uid="uid://bkmgkx2bphvts" path="res://Scripts/Player.gd" id="1_rpqav"]
+[ext_resource type="PackedScene" uid="uid://elqnlyrmsrf8" path="res://Models/Top_Hat/top_hat.glb" id="2_kyqiw"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_rxg2q"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_c1w88"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kyqiw"]
+albedo_color = Color(0.30588236, 1, 1, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_kyqiw"]
+material = SubResource("StandardMaterial3D_kyqiw")
+
+[node name="Player" type="CharacterBody3D" unique_id=23132170 node_paths=PackedStringArray("camera")]
+script = ExtResource("1_rpqav")
+camera = NodePath("camera_pivot/camera_mount/camera")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=52597495]
+shape = SubResource("CapsuleShape3D_rxg2q")
+
+[node name="mesh" type="MeshInstance3D" parent="." unique_id=1822569825]
+mesh = SubResource("CapsuleMesh_c1w88")
+
+[node name="top_hat" parent="mesh" unique_id=2123296361 instance=ExtResource("2_kyqiw")]
+transform = Transform3D(0.15, 0, 0, 0, 0.15, 0, 0, 0, 0.15, 0, 0.77351165, 0)
+
+[node name="glasses" type="MeshInstance3D" parent="mesh" unique_id=1635292212]
+transform = Transform3D(0.2, 0, 0, 0, -8.742278e-09, 0.2, 0, -0.2, -8.742278e-09, 0, 0.41114247, -0.45244896)
+mesh = SubResource("CylinderMesh_kyqiw")
+
+[node name="camera_pivot" type="Node3D" parent="." unique_id=1672161022]
+
+[node name="camera_mount" type="Node3D" parent="camera_pivot" unique_id=1208921700]
+
+[node name="camera" type="Camera3D" parent="camera_pivot/camera_mount" unique_id=1677794798]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6968701, 1.8488097, 3.3547091)
