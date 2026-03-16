@@ -17,7 +17,7 @@ data_*/
 mono_crash.*.json
 
 # Builds
-./Builds
+Builds/
 
 # Godot Addons
-./addons
+addons/
