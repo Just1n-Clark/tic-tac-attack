@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://drv764t1vupbv"]
+
+[ext_resource type="Script" uid="uid://cs2nsw3hwxpbk" path="res://Scripts/EnemyStats.gd" id="1_fdma2"]
+
+[resource]
+script = ExtResource("1_fdma2")
+name = "Mini"
+MAX_HEALTH = 5.0
+attack_damage = 2.0
+attack_range = 1.0
+attack_cooldown = 1.0
+move_speed = 5.0
+score_value = 5
+size = 0.5
+wave_unlock = 3
+metadata/_custom_type_script = "uid://cs2nsw3hwxpbk"

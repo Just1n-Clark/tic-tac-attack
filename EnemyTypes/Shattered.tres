@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://c6gyybhmcg5rs"]
+
+[ext_resource type="Script" uid="uid://cs2nsw3hwxpbk" path="res://Scripts/EnemyStats.gd" id="1_jt7nq"]
+
+[resource]
+script = ExtResource("1_jt7nq")
+name = "Shattered"
+MAX_HEALTH = 25.0
+attack_damage = 6.0
+attack_range = 5.0
+attack_cooldown = 1.0
+move_speed = 3.0
+score_value = 40
+size = 0.7
+wave_unlock = 3
+metadata/_custom_type_script = "uid://cs2nsw3hwxpbk"

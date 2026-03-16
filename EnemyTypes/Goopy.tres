@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://d0fbpq6s3wbs6"]
+
+[ext_resource type="Script" uid="uid://cs2nsw3hwxpbk" path="res://Scripts/EnemyStats.gd" id="1_nwq5s"]
+
+[resource]
+script = ExtResource("1_nwq5s")
+name = "Goopy"
+MAX_HEALTH = 50.0
+attack_cooldown = 5.0
+score_value = 30
+size = 1.2
+wave_unlock = 3
+metadata/_custom_type_script = "uid://cs2nsw3hwxpbk"

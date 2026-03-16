@@ -1,25 +1,29 @@
+class_name Enemy
 extends CharacterBody3D
 
-class_name Enemy
-
-const SPEED = 2.5
-const ATTACK_DISTANCE = 2;
+var move_speed = 2.5
+var ATTACK_DISTANCE = 2;
 
 var attack_cooldown = 1;
+var pre_attack_timer = 1.5;
 var next_attack = 0;
 
-var damage = 5;
+var attack_damage = 5;
+var score_value = 15;
+var attack_range = 2;
 
-const MAX_HEALTH = 40;
-var current_health = 0;
+var MAX_HEALTH = 20;
+var current_health: float = MAX_HEALTH;
 
 @export var player : CharacterBody3D;
 
 @onready var nav_agent = $NavigationAgent3D;
 
+#region private methods
 func _ready() -> void:
 	player = Global.player;
 	current_health = MAX_HEALTH;
+	add_to_group("enemy")
 
 func _physics_process(delta: float) -> void:
 	if player == null:
@@ -30,7 +34,7 @@ func _physics_process(delta: float) -> void:
 	
 	nav_agent.set_target_position(player.global_position);
 	var next_nav_postion = nav_agent.get_next_path_position();
-	velocity = (next_nav_postion - global_position).normalized() * SPEED;
+	velocity = (next_nav_postion - global_position).normalized() * move_speed;
 	
 	move_and_slide();
 	
@@ -38,10 +42,21 @@ func _physics_process(delta: float) -> void:
 	
 	# Check if able to damage player
 	if global_position.distance_to(player.global_position) < ATTACK_DISTANCE:
-		if next_attack > attack_cooldown:
-			next_attack = 0;
-			player.take_damage(damage);
+		
+		await get_tree().create_timer(pre_attack_timer).timeout;
+		
+		if global_position.distance_to(player.global_position) < ATTACK_DISTANCE:
+			if next_attack > attack_cooldown:
+				next_attack = 0;
+				player.take_damage(attack_damage);
+		
+func die():
+	print("Enemy died!");
+	Global.add_score(score_value);
+	queue_free();
+#endregion
 
+#region public methods
 func take_damage(damage: float):
 	current_health -= damage;
 	current_health = clamp(current_health, 0, MAX_HEALTH);
@@ -51,7 +66,12 @@ func take_damage(damage: float):
 	if (current_health < 1):
 		die();
 		
-func die():
-	print("Enemy died!");
-	Global.add_score(10);
-	queue_free();
+func initialize(stats: EnemyStats) -> void:
+	self.name = stats.name;
+	self.MAX_HEALTH = stats.MAX_HEALTH;
+	self.attack_damage = stats.attack_damage;
+	self.attack_range = stats.attack_range;
+	self.attack_cooldown = stats.attack_cooldown;
+	self.move_speed = stats.move_speed;
+	self.score_value = stats.score_value;
+	self.scale = Vector3(stats.size, stats.size, stats.size);

@@ -6,10 +6,10 @@ signal health_changed;
 
 @onready var camera_pivot: Node3D = $camera_pivot
 @onready var camera_mount: Node3D = $camera_pivot/camera_mount
-@export var camera: Camera3D
 @onready var impact_sound: AudioStreamPlayer3D = $impact_sound
-
 @onready var mesh: MeshInstance3D = $mesh
+
+@export var camera: Camera3D
 
 #region Movement
 const JUMP_VELOCITY = 4.5
@@ -56,12 +56,10 @@ func _ready() -> void:
 	Global.player = self;
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED;
 	
-	current_health = MAX_HEALTH;
-	
 func _input(event) -> void:
 	if is_dead:
 		return;
-	
+
 	if (event is InputEventMouseMotion):
 		# Horizontal Look
 		var horizontal_rotation = deg_to_rad(event.relative.x * sens_horizontal);
@@ -203,7 +201,6 @@ func take_damage(damage: float):
 	current_health = clamp(current_health, 0, MAX_HEALTH);
 	
 	health_changed.emit();
-	print("Player health: %d" % current_health);
 	
 	if (current_health < 1):
 		_die();
