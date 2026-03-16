@@ -2,10 +2,14 @@
 
 [ext_resource type="Script" uid="uid://bkmgkx2bphvts" path="res://Scripts/Player.gd" id="1_rpqav"]
 [ext_resource type="PackedScene" uid="uid://elqnlyrmsrf8" path="res://Models/Top_Hat/top_hat.glb" id="2_kyqiw"]
+[ext_resource type="AudioStream" uid="uid://4olxnodd6w7f" path="res://Audio/impactMining_000.ogg" id="3_gntrk"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_rxg2q"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gntrk"]
+
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_c1w88"]
+material = SubResource("StandardMaterial3D_gntrk")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kyqiw"]
 albedo_color = Color(0.79607844, 0.23529412, 0, 1)
@@ -36,3 +40,7 @@ mesh = SubResource("CylinderMesh_kyqiw")
 
 [node name="camera" type="Camera3D" parent="camera_pivot/camera_mount" unique_id=1677794798]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6968701, 1.8488097, 3.3547091)
+
+[node name="impact_sound" type="AudioStreamPlayer3D" parent="." unique_id=1062419909]
+stream = ExtResource("3_gntrk")
+volume_db = -10.0

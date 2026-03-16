@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://lk3bjp4lr7f0" path="res://Textures/Green/texture_09.png" id="4_v1gob"]
 [ext_resource type="Texture2D" uid="uid://dl65ifwkj3l5j" path="res://Textures/Red/texture_09.png" id="5_jw32o"]
 [ext_resource type="PackedScene" uid="uid://dux45emmw4r5y" path="res://Scenes/Player.tscn" id="6_v1gob"]
+[ext_resource type="Script" uid="uid://uqkcsmispwdv" path="res://Scenes/HealthBar.gd" id="8_50glp"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_pbw6q"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -66,9 +67,14 @@ sens_vertical = 0.1
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1447674343]
 navigation_mesh = SubResource("NavigationMesh_v1gob")
 
-[node name="Enemy" parent="NavigationRegion3D" unique_id=569533835 node_paths=PackedStringArray("player") instance=ExtResource("2_jw32o")]
+[node name="Enemy" parent="NavigationRegion3D" unique_id=569533835 groups=["enemy"] instance=ExtResource("2_jw32o")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.28236, 2.2416759, 2.7377377)
-player = NodePath("../../Player")
+
+[node name="Enemy2" parent="NavigationRegion3D" unique_id=390958065 groups=["enemy"] instance=ExtResource("2_jw32o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.3194647, 2, 0.007323265)
+
+[node name="Enemy3" parent="NavigationRegion3D" unique_id=141758322 groups=["enemy"] instance=ExtResource("2_jw32o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.859851, 1.9999995, -6.6898537)
 
 [node name="Floor" type="CSGBox3D" parent="NavigationRegion3D" unique_id=1827435333]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
@@ -101,3 +107,20 @@ transform = Transform3D(0.9300846, 0, -0.36734545, 0, 1, 0, 0.36734545, 0, 0.930
 material_override = SubResource("StandardMaterial3D_kln2b")
 use_collision = true
 size = Vector3(2, 1, 2)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=952440100]
+
+[node name="ProgressBar" type="ProgressBar" parent="CanvasLayer" unique_id=625542704 node_paths=PackedStringArray("player")]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -76.0
+offset_top = -46.0
+offset_right = 76.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("8_50glp")
+player = NodePath("../../Player")

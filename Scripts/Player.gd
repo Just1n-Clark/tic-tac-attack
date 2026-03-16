@@ -1,16 +1,23 @@
 extends CharacterBody3D
 
+class_name Player
+
+signal health_changed;
+
 @onready var camera_pivot: Node3D = $camera_pivot
 @onready var camera_mount: Node3D = $camera_pivot/camera_mount
 @export var camera: Camera3D
+@onready var impact_sound: AudioStreamPlayer3D = $impact_sound
+
 @onready var mesh: MeshInstance3D = $mesh
 
 #region Movement
 const JUMP_VELOCITY = 4.5
-var speed = 2.5
+var speed = 3
 
 var do_dash = false;
 var can_dash = true;
+var dash_speed = 6;
 var dash_duration = 0.2
 var dash_cooldown = 2.0
 
@@ -30,28 +37,31 @@ var angle_fix_speed = 3;
 #endregion
 
 #region Health
-const MAX_HEALTH = 30;
-var current_health = 0;
+const MAX_HEALTH = 60;
+var current_health: float = MAX_HEALTH;
+
+var is_dead = false;
 #endregion
 
 #region Combat
-const ATTACK_DISTANCE = 2;
+const ATTACK_RANGE = 2;
 
 var damage = 10;
 var next_attack = 0;
-var attack_cooldown = 1;
+var attack_cooldown = 0.02;
 #endregion
 
-#region References
-@export var enemy : CharacterBody3D;
-#endregion
-
+# Private Methods
 func _ready() -> void:
+	Global.player = self;
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED;
 	
 	current_health = MAX_HEALTH;
 	
 func _input(event) -> void:
+	if is_dead:
+		return;
+	
 	if (event is InputEventMouseMotion):
 		# Horizontal Look
 		var horizontal_rotation = deg_to_rad(event.relative.x * sens_horizontal);
@@ -71,26 +81,25 @@ func _input(event) -> void:
 		camera.position.z = clamp(camera.position.z, min_camera_zoom, max_camera_zoom);
 		
 func _physics_process(delta: float) -> void:
+	if is_dead:
+		return;
+	
 	# Camera clamping smooths between values
-	clamp_and_smooth_camera(delta);
+	_clamp_and_smooth_camera(delta);
 	
 	# Add the gravity.
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 		
 	if Input.is_action_just_pressed("dash") and can_dash:
-		dash();
+		_dash();
 
 	set_velocity_and_direction(delta);
 	
-	if (enemy != null):
-		next_attack += delta;
-		
-		# Check if able to damage enemy
-		if global_position.distance_to(enemy.global_position) < ATTACK_DISTANCE:
-			if next_attack > attack_cooldown:
-				next_attack = 0;
-				enemy.take_damage(damage);
+	# Attack
+	next_attack += delta;
+	if (Input.is_action_just_pressed("attack")):
+			_perform_attack();
 
 	move_and_slide();
 	
@@ -102,8 +111,10 @@ func set_velocity_and_direction(delta):
 	
 	if do_dash:
 		var dash_direction = mesh.transform.basis.z.normalized();
-		velocity = -dash_direction * speed * 5;
+		velocity = -dash_direction * speed * dash_speed;
 		velocity.y = 0;
+		
+		_create_dash_effect();
 	elif direction:
 		var target_transform = Transform3D.IDENTITY.looking_at(direction, Vector3.UP);
 		mesh.basis = mesh.basis.slerp(target_transform.basis, direction_blend_speed * delta);
@@ -114,7 +125,7 @@ func set_velocity_and_direction(delta):
 		velocity.x = move_toward(velocity.x, 0, speed);
 		velocity.z = move_toward(velocity.z, 0, speed);
 
-func clamp_and_smooth_camera(delta):
+func _clamp_and_smooth_camera(delta):
 	var t = inverse_lerp(min_camera_zoom, max_camera_zoom, camera.position.z);
 	
 	var target_max_angle = lerp(deg_to_rad(17), deg_to_rad(20), t);
@@ -124,7 +135,7 @@ func clamp_and_smooth_camera(delta):
 	
 	camera_mount.rotation.x = clamp(camera_mount.rotation.x, min_camera_angle, max_camera_angle);
 	
-func dash():
+func _dash():
 	can_dash = false
 	do_dash = true
 	
@@ -135,19 +146,64 @@ func dash():
 	await get_tree().create_timer(dash_cooldown).timeout;
 	
 	can_dash = true;
-
+		
+func _die():
+	is_dead = true;
+	print("Player died!");
+	
+	await get_tree().create_timer(3.0).timeout;
+	
+	is_dead = false;
+	_respawn();
+	
+func _respawn():
+	current_health = MAX_HEALTH;
+	print("Player respawned");
+	
+func _perform_attack():
+	# Check if in range to attack enemy
+	var enemies = get_tree().get_nodes_in_group("enemy");
+	var closest_enemy = null;
+	var closest_distance = INF;
+	
+	for enemy in enemies:
+		var distance_to_enemy = global_position.distance_to(enemy.global_position)
+		if (distance_to_enemy < ATTACK_RANGE):
+			if (distance_to_enemy < closest_distance):
+				closest_distance = distance_to_enemy;
+				closest_enemy = enemy;
+				
+	if next_attack > attack_cooldown and closest_enemy != null:
+		next_attack = 0;
+		closest_enemy.take_damage(damage);
+		impact_sound.play();
+	
+# Dash ghost effect inspired by gamedevjourney.co.uk
+func _create_dash_effect():
+	var visual_copy_of_player = mesh.duplicate();
+	var material_copy = visual_copy_of_player.get_active_material(0).duplicate();
+	material_copy.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material_copy.albedo_color.a = 0.1;
+	visual_copy_of_player.set_surface_override_material(0, material_copy);
+	
+	# Add visual copy to scene
+	get_parent().add_child(visual_copy_of_player);
+	visual_copy_of_player.global_position = global_position;
+	
+	await get_tree().create_timer(dash_duration).timeout;
+	
+	visual_copy_of_player.queue_free();
+	
+# Public methods
 func take_damage(damage: float):
+	if is_dead:
+		return;
+	
 	current_health -= damage;
 	current_health = clamp(current_health, 0, MAX_HEALTH);
 	
-	print("Health: %d" % current_health);
+	health_changed.emit();
+	print("Player health: %d" % current_health);
 	
 	if (current_health < 1):
-		die();
-		
-func die():
-	print("Player died!");
-	
-func respawn():
-	current_health = MAX_HEALTH;
-	print("Player respawned")
+		_die();
