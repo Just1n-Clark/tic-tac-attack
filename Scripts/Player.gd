@@ -32,6 +32,9 @@ var min_camera_angle = deg_to_rad(-40);
 var max_camera_angle = deg_to_rad(20);
 var angle_fix_speed = 3;
 
+var horizontal_rotation: float;
+var vertical_rotation: float;
+
 @export var sens_horizontal = 0.3;
 @export var sens_vertical = 0.3
 #endregion
@@ -59,15 +62,6 @@ func _ready() -> void:
 func _input(event) -> void:
 	if is_dead:
 		return;
-
-	if (event is InputEventMouseMotion):
-		# Horizontal Look
-		var horizontal_rotation = deg_to_rad(event.relative.x * sens_horizontal);
-		camera_pivot.rotate_y(-horizontal_rotation);
-		
-		# Vertical look
-		var vertical_rotation = deg_to_rad(-event.relative.y * sens_vertical);
-		camera_mount.rotate_x(vertical_rotation);
 	
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
@@ -76,12 +70,22 @@ func _input(event) -> void:
 		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			camera.position.z += CAMERA_ZOOM_SPEED;
 
+		# Zoom clamp
 		camera.position.z = clamp(camera.position.z, min_camera_zoom, max_camera_zoom);
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		horizontal_rotation = deg_to_rad(event.relative.x * sens_horizontal);
+		camera_pivot.rotate_y(-horizontal_rotation);
+		
+		vertical_rotation = deg_to_rad(-event.relative.y * sens_vertical);
+		camera_mount.rotate_x(vertical_rotation);
+		
 		
 func _physics_process(delta: float) -> void:
 	if is_dead:
 		return;
-	
+		
 	# Camera clamping smooths between values
 	_clamp_and_smooth_camera(delta);
 	
@@ -96,7 +100,7 @@ func _physics_process(delta: float) -> void:
 	
 	# Attack
 	next_attack += delta;
-	if (Input.is_action_just_pressed("attack")):
+	if (Input.is_action_just_pressed("attack") or Input.is_action_just_pressed("alt_attack")):
 			_perform_attack();
 
 	move_and_slide();
