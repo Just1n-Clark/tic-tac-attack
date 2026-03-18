@@ -1,7 +1,7 @@
 class_name Enemy
 extends CharacterBody3D
 
-var move_speed = 2.5
+var move_speed = 3
 var ATTACK_DISTANCE = 2;
 
 var attack_cooldown = 1;
@@ -51,7 +51,7 @@ func _physics_process(delta: float) -> void:
 				player.take_damage(attack_damage);
 		
 func die():
-	print("Enemy died!");
+	Global.decrement_enemy_count();
 	Global.add_score(score_value);
 	queue_free();
 #endregion
@@ -60,8 +60,6 @@ func die():
 func take_damage(damage: float):
 	current_health -= damage;
 	current_health = clamp(current_health, 0, MAX_HEALTH);
-	
-	print("Enemy health: %d" % current_health);
 	
 	if (current_health < 1):
 		die();

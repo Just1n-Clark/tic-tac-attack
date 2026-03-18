@@ -21,7 +21,19 @@ Global="*uid://bol1vs31mqxv1"
 
 [editor_plugins]
 
-enabled=PackedStringArray()
+enabled=PackedStringArray("res://addons/GDTask/plugin.cfg", "res://addons/ridiculous_coding/plugin.cfg", "res://addons/script_splitter/plugin.cfg")
+
+[file_customization]
+
+folder_colors={
+"res://EnemyTypes/": "purple",
+"res://Models/": "red",
+"res://Scenes/": "orange",
+"res://Screenshots/": "pink",
+"res://Scripts/": "green",
+"res://Textures/": "blue",
+"res://addons/": "gray"
+}
 
 [input]
 

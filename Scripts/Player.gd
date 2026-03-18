@@ -49,7 +49,7 @@ var is_dead = false;
 #region Combat
 const ATTACK_RANGE = 2;
 
-var damage = 10;
+var attack_damage = 10;
 var next_attack = 0;
 var attack_cooldown = 0.02;
 #endregion
@@ -177,7 +177,7 @@ func _perform_attack():
 				
 	if next_attack > attack_cooldown and closest_enemy != null:
 		next_attack = 0;
-		closest_enemy.take_damage(damage);
+		closest_enemy.take_damage(attack_damage);
 		impact_sound.play();
 	
 # Dash ghost effect inspired by gamedevjourney.co.uk
