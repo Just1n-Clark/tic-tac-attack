@@ -106,5 +106,6 @@ func _spawn_label(enemy_instance: CharacterBody3D, name: String):
 	var label = Label3D.new();
 	enemy_instance.add_child(label);
 	
+	# Set position and text
 	label.global_position = enemy_instance.global_position + Vector3(0, 3, 0);
 	label.text = "%d | " % enemy_instance.current_health + name;
