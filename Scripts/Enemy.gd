@@ -73,3 +73,5 @@ func initialize(stats: EnemyStats) -> void:
 	self.move_speed = stats.move_speed;
 	self.score_value = stats.score_value;
 	self.scale = Vector3(stats.size, stats.size, stats.size);
+
+	

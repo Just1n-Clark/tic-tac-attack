@@ -3,6 +3,7 @@ extends CharacterBody3D
 class_name Player
 
 signal health_changed;
+signal game_over;
 
 @onready var camera_pivot: Node3D = $camera_pivot
 @onready var camera_mount: Node3D = $camera_pivot/camera_mount
@@ -10,6 +11,8 @@ signal health_changed;
 @onready var mesh: MeshInstance3D = $mesh
 
 @export var camera: Camera3D
+
+@export var game_over_label: Label;
 
 #region Movement
 const JUMP_VELOCITY = 4.5
@@ -156,6 +159,14 @@ func _die():
 	await get_tree().create_timer(3.0).timeout;
 	
 	is_dead = false;
+	
+	#game_over.emit();
+	game_over_label.visible = true;
+	
+	await get_tree().create_timer(10).timeout;
+	
+	game_over_label.visible = false;
+	
 	_respawn();
 	
 func _respawn():

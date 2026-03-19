@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://dl65ifwkj3l5j" path="res://Textures/Red/texture_09.png" id="5_jw32o"]
 [ext_resource type="PackedScene" uid="uid://dux45emmw4r5y" path="res://Scenes/Player.tscn" id="6_v1gob"]
 [ext_resource type="Script" uid="uid://uqkcsmispwdv" path="res://Scripts/HealthBar.gd" id="8_50glp"]
-[ext_resource type="Script" uid="uid://dhh3boj8o202h" path="res://Scenes/wave_display.gd" id="9_4kpch"]
+[ext_resource type="Script" uid="uid://dhh3boj8o202h" path="res://Scripts/wave_display.gd" id="9_4kpch"]
 [ext_resource type="Script" uid="uid://ox1lncgt811h" path="res://Scripts/EnemySpawner.gd" id="9_bmxlf"]
 [ext_resource type="Script" uid="uid://dd84fp7d8hpb7" path="res://Scripts/ScoreDisplay.gd" id="9_vy5pj"]
 
@@ -69,6 +69,24 @@ font_color = Color(0, 0.9045224, 0.3320153, 1)
 [sub_resource type="LabelSettings" id="LabelSettings_4kpch"]
 font_size = 30
 font_color = Color(1, 0, 0, 1)
+
+[sub_resource type="GDScript" id="GDScript_bmxlf"]
+script/source = "extends Label
+
+@export var player: CharacterBody3D;
+
+func _ready() -> void:
+	visible = false;
+	#player.game_over.connect(_game_over_show);
+	
+func _game_over_show():
+	visible = true;
+	
+	await get_tree().create_timer(5).timeout;
+	
+	visible = false;
+	
+"
 
 [node name="Main" type="Node3D" unique_id=256694422]
 
@@ -186,6 +204,7 @@ text = "Wave: 1"
 script = ExtResource("9_4kpch")
 
 [node name="winner_display" type="Label" parent="CanvasLayer" unique_id=1663129510]
+visible = false
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -203,6 +222,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="game_over_display" type="Label" parent="CanvasLayer" unique_id=794501743]
+visible = false
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -216,6 +236,7 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "Game Over!"
 label_settings = SubResource("LabelSettings_4kpch")
+script = SubResource("GDScript_bmxlf")
 
 [node name="EnemySpawner" type="Node" parent="." unique_id=1728849347 node_paths=PackedStringArray("nav_region")]
 script = ExtResource("9_bmxlf")

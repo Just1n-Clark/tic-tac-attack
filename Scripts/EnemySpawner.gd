@@ -23,13 +23,7 @@ var enemies_per_wave = max_enemies;
 #endregion
 
 func _ready() -> void:
-	# Spawn enemy
-	# Check if wave_unlock < current_wave
 	_spawn_waves();
-	
-	# Spawn Boss
-	# Check if wave_unlock < current_wave
-	_spawn_boss();
 
 func _spawn_waves():
 	while (current_wave < max_wave):
@@ -45,6 +39,11 @@ func _spawn_waves():
 			i += 1;
 			
 		# Spawn boss enemies
+		if current_wave == 5:
+			_spawn_boss(1);
+			
+		if current_wave == 10:
+			_spawn_boss(2);
 		
 		# Check all enemies dead
 		if Global.enemy_count > 0:
@@ -60,7 +59,7 @@ func _spawn_enemy(valid_spawnables: Array[EnemyStats]):
 	# Move away from world center to random location within bounds
 	enemy_instance.position = Vector3(
 		randi_range(-10, 10),
-		3,
+		5,
 		randi_range(-10, 10)
 	);
 	
@@ -68,11 +67,32 @@ func _spawn_enemy(valid_spawnables: Array[EnemyStats]):
 	var enemy_type = valid_spawnables[randi_range(0, valid_spawnables.size() - 1)];
 	enemy_instance.initialize(enemy_type);
 	enemy_instance.name = enemy_type.name;
+	print("Spawned: %s" % enemy_instance.name);
+	
+	_spawn_label(enemy_instance, enemy_type.name);
 	
 	Global.increment_enemy_count();
-	
-func _spawn_boss():
-	pass;
+
+func _spawn_boss(amount: int):
+	for i in amount:
+		var boss_instance = enemy_prefab.instantiate();
+		nav_region.add_child(boss_instance);
+		
+		boss_instance.position = Vector3(
+			randi_range(-10, 10),
+			5,
+			randi_range(-10, 10)
+		);
+		
+		# Spawn boss
+		var enemy_type = enemy_types[4];
+		boss_instance.initialize(enemy_type);
+		boss_instance.name = enemy_type.name;
+		print("Boss spawned: %s" % boss_instance.name);
+		
+		_spawn_label(boss_instance, enemy_type.name);
+		
+		Global.increment_enemy_count();
 	
 func _valid_spawnables() -> Array[EnemyStats]:
 	var valid_spawnables: Array[EnemyStats] = [];
@@ -81,3 +101,10 @@ func _valid_spawnables() -> Array[EnemyStats]:
 			valid_spawnables.push_back(type);
 	
 	return valid_spawnables;
+	
+func _spawn_label(enemy_instance: CharacterBody3D, name: String):
+	var label = Label3D.new();
+	enemy_instance.add_child(label);
+	
+	label.global_position = enemy_instance.global_position + Vector3(0, 3, 0);
+	label.text = "%d | " % enemy_instance.current_health + name;
