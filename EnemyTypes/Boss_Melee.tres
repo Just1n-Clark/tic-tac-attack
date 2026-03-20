@@ -4,13 +4,13 @@
 
 [resource]
 script = ExtResource("1_cavf6")
-name = "Boss_Melee"
-MAX_HEALTH = 200.0
+name = "Boss"
+MAX_HEALTH = 500.0
 attack_damage = 15.0
 attack_cooldown = 5.0
 move_speed = 1.2
 score_value = 100
-size = 3.0
+size = 2.0
 wave_unlock = 5
 is_boss = true
 metadata/_custom_type_script = "uid://cs2nsw3hwxpbk"

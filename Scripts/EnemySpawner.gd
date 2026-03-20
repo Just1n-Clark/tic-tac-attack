@@ -15,7 +15,7 @@ const enemy_prefab: PackedScene = preload("res://Scenes/Enemy.tscn");
 var max_enemies = 10;
 var current_wave = 0;
 var max_wave = 10;
-var wave_cooldown_time = 5;
+var wave_cooldown_time = 1;
 var enemies_per_wave = max_enemies;
 
 ##region References
@@ -68,7 +68,7 @@ func _spawn_enemy(valid_spawnables: Array[EnemyStats]):
 	var enemy_type = valid_spawnables[randi_range(0, valid_spawnables.size() - 1)];
 	enemy_instance.initialize(enemy_type);
 	enemy_instance.name = enemy_type.name;
-	print("Spawned: %s" % enemy_instance.name);
+	#print("Spawned: %s" % enemy_instance.name);
 	
 	#_spawn_label(enemy_instance, enemy_type.name);
 	
@@ -77,12 +77,11 @@ func _spawn_enemy(valid_spawnables: Array[EnemyStats]):
 func _spawn_boss(amount: int):
 	for i in amount:
 		var boss_instance = enemy_prefab.instantiate();
-		#nav_region.add_child(boss_instance);
 		add_child(boss_instance);
 		
 		boss_instance.position = Vector3(
 			randi_range(-10, 10),
-			5,
+			7,
 			randi_range(-10, 10)
 		);
 		

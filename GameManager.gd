@@ -11,6 +11,8 @@ var enemy_spawner_instance: EnemySpawner;
 func _ready() -> void:
 	initialize_game();
 	
+	Global.game_win.connect(_complete_game);
+	
 func initialize_game():
 	player_instance = player.instantiate();
 	enemy_spawner_instance = enemy_spawner.instantiate();
@@ -43,3 +45,6 @@ func _restart_game():
 	# Respawn nodes
 	# Call at end of frame to avoid initializing and deleting in same frame
 	call_deferred("initialize_game");
+	
+func _complete_game():
+	print("You win!");

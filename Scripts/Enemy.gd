@@ -33,12 +33,19 @@ func _physics_process(delta: float) -> void:
 	if player == null:
 		print("Player is null!");
 		return;
+		
+	if abs(global_position.x) > 50 or abs(global_position.z) > 50:
+		die();
 
 	velocity = Vector3.ZERO;
 	
 	nav_agent.set_target_position(player.global_position);
 	var next_nav_postion = nav_agent.get_next_path_position();
+	
 	velocity = (next_nav_postion - global_position).normalized() * move_speed;
+	
+	if name == "Boss":
+		print(velocity);
 	
 	move_and_slide();
 	
@@ -84,7 +91,12 @@ func initialize(stats: EnemyStats) -> void:
 	self.attack_cooldown = stats.attack_cooldown;
 	self.move_speed = stats.move_speed;
 	self.score_value = stats.score_value;
-	self.scale = Vector3(stats.size, stats.size, stats.size);
+	
+	$MeshInstance3D.scale = Vector3(stats.size, stats.size, stats.size);
+	$CollisionShape3D.scale = Vector3(stats.size, stats.size, stats.size);
+	
+	if (stats.size > 2):
+		$NavigationAgent3D.radius = stats.size;
 	
 	_spawn_label();
 

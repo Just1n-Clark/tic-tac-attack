@@ -105,6 +105,11 @@ func _physics_process(delta: float) -> void:
 	next_attack += delta;
 	if (Input.is_action_just_pressed("attack") or Input.is_action_just_pressed("alt_attack")):
 			_perform_attack();
+	
+	if (Input.is_action_just_pressed("kill_all")):
+		var _kill_group = get_tree().get_nodes_in_group("enemy");
+		for enemy in _kill_group:
+			enemy.take_damage(100000);
 
 	move_and_slide();
 	
