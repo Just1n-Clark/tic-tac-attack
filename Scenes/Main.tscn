@@ -5,11 +5,10 @@
 [ext_resource type="Texture2D" uid="uid://dkdxi3wt4y7a2" path="res://Textures/Purple/texture_09.png" id="3_pbw6q"]
 [ext_resource type="Texture2D" uid="uid://lk3bjp4lr7f0" path="res://Textures/Green/texture_09.png" id="4_v1gob"]
 [ext_resource type="Texture2D" uid="uid://dl65ifwkj3l5j" path="res://Textures/Red/texture_09.png" id="5_jw32o"]
-[ext_resource type="PackedScene" uid="uid://dux45emmw4r5y" path="res://Scenes/Player.tscn" id="6_v1gob"]
 [ext_resource type="Script" uid="uid://uqkcsmispwdv" path="res://Scripts/HealthBar.gd" id="8_50glp"]
 [ext_resource type="Script" uid="uid://dhh3boj8o202h" path="res://Scripts/wave_display.gd" id="9_4kpch"]
-[ext_resource type="Script" uid="uid://ox1lncgt811h" path="res://Scripts/EnemySpawner.gd" id="9_bmxlf"]
 [ext_resource type="Script" uid="uid://dd84fp7d8hpb7" path="res://Scripts/ScoreDisplay.gd" id="9_vy5pj"]
+[ext_resource type="Script" uid="uid://ph3p6j1q8uo0" path="res://GameManager.gd" id="11_4kpch"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_pbw6q"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -97,11 +96,6 @@ shadow_enabled = true
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=613867271]
 environment = SubResource("Environment_jw32o")
 
-[node name="Player" parent="." unique_id=23132170 instance=ExtResource("6_v1gob")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.014425, 0)
-sens_horizontal = 0.1
-sens_vertical = 0.1
-
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1447674343]
 navigation_mesh = SubResource("NavigationMesh_v1gob")
 
@@ -159,7 +153,7 @@ mesh = SubResource("BoxMesh_grg3l")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=952440100]
 
-[node name="ProgressBar" type="ProgressBar" parent="CanvasLayer" unique_id=625542704 node_paths=PackedStringArray("player")]
+[node name="ProgressBar" type="ProgressBar" parent="CanvasLayer" unique_id=625542704]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -172,7 +166,6 @@ offset_bottom = -18.0
 grow_horizontal = 2
 grow_vertical = 0
 script = ExtResource("8_50glp")
-player = NodePath("../../Player")
 
 [node name="score_display" type="Label" parent="CanvasLayer" unique_id=1663559404]
 anchors_preset = 7
@@ -238,6 +231,6 @@ text = "Game Over!"
 label_settings = SubResource("LabelSettings_4kpch")
 script = SubResource("GDScript_bmxlf")
 
-[node name="EnemySpawner" type="Node" parent="." unique_id=1728849347 node_paths=PackedStringArray("nav_region")]
-script = ExtResource("9_bmxlf")
-nav_region = NodePath("../NavigationRegion3D")
+[node name="GameManager" type="Node" parent="." unique_id=1888784146 node_paths=PackedStringArray("health_bar")]
+script = ExtResource("11_4kpch")
+health_bar = NodePath("../CanvasLayer/ProgressBar")

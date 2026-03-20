@@ -18,9 +18,9 @@ var max_wave = 10;
 var wave_cooldown_time = 5;
 var enemies_per_wave = max_enemies;
 
-#region References
-@export var nav_region: NavigationRegion3D;
-#endregion
+##region References
+#@export var nav_region: NavigationRegion3D;
+##endregion
 
 func _ready() -> void:
 	_spawn_waves();
@@ -54,7 +54,8 @@ func _spawn_waves():
 	
 func _spawn_enemy(valid_spawnables: Array[EnemyStats]):
 	var enemy_instance = enemy_prefab.instantiate();
-	nav_region.add_child(enemy_instance);
+	#nav_region.add_child(enemy_instance);
+	add_child(enemy_instance);
 	
 	# Move away from world center to random location within bounds
 	enemy_instance.position = Vector3(
@@ -69,14 +70,15 @@ func _spawn_enemy(valid_spawnables: Array[EnemyStats]):
 	enemy_instance.name = enemy_type.name;
 	print("Spawned: %s" % enemy_instance.name);
 	
-	_spawn_label(enemy_instance, enemy_type.name);
+	#_spawn_label(enemy_instance, enemy_type.name);
 	
 	Global.increment_enemy_count();
 
 func _spawn_boss(amount: int):
 	for i in amount:
 		var boss_instance = enemy_prefab.instantiate();
-		nav_region.add_child(boss_instance);
+		#nav_region.add_child(boss_instance);
+		add_child(boss_instance);
 		
 		boss_instance.position = Vector3(
 			randi_range(-10, 10),
@@ -90,7 +92,7 @@ func _spawn_boss(amount: int):
 		boss_instance.name = enemy_type.name;
 		print("Boss spawned: %s" % boss_instance.name);
 		
-		_spawn_label(boss_instance, enemy_type.name);
+		#_spawn_label(boss_instance, enemy_type.name);
 		
 		Global.increment_enemy_count();
 	
@@ -101,11 +103,3 @@ func _valid_spawnables() -> Array[EnemyStats]:
 			valid_spawnables.push_back(type);
 	
 	return valid_spawnables;
-	
-func _spawn_label(enemy_instance: CharacterBody3D, name: String):
-	var label = Label3D.new();
-	enemy_instance.add_child(label);
-	
-	# Set position and text
-	label.global_position = enemy_instance.global_position + Vector3(0, 3, 0);
-	label.text = "%d | " % enemy_instance.current_health + name;

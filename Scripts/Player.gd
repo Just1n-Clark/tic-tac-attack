@@ -12,7 +12,7 @@ signal game_over;
 
 @export var camera: Camera3D
 
-@export var game_over_label: Label;
+#@export var game_over_label: Label;
 
 #region Movement
 const JUMP_VELOCITY = 4.5
@@ -38,8 +38,8 @@ var angle_fix_speed = 3;
 var horizontal_rotation: float;
 var vertical_rotation: float;
 
-@export var sens_horizontal = 0.3;
-@export var sens_vertical = 0.3
+@export var sens_horizontal = 0.1;
+@export var sens_vertical = 0.1;
 #endregion
 
 #region Health
@@ -160,12 +160,12 @@ func _die():
 	
 	is_dead = false;
 	
-	#game_over.emit();
-	game_over_label.visible = true;
+	game_over.emit();
+	#game_over_label.visible = true;
 	
-	await get_tree().create_timer(10).timeout;
+	#await get_tree().create_timer(10).timeout;
 	
-	game_over_label.visible = false;
+	#game_over_label.visible = false;
 	
 	_respawn();
 	

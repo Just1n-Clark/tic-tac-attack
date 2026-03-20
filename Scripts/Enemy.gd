@@ -15,6 +15,10 @@ var attack_range = 2;
 var MAX_HEALTH = 20;
 var current_health: float = MAX_HEALTH;
 
+var pre_attack_state: bool = false;
+
+var label: Label3D;
+
 @export var player : CharacterBody3D;
 
 @onready var nav_agent = $NavigationAgent3D;
@@ -42,13 +46,21 @@ func _physics_process(delta: float) -> void:
 	
 	# Check if able to damage player
 	if global_position.distance_to(player.global_position) < ATTACK_DISTANCE:
+		if not pre_attack_state:
+			pre_attack_state = true;
+			await get_tree().create_timer(pre_attack_timer).timeout;
+			
+			if is_instance_valid(self):
+				pre_attack_state = false;
 		
-		await get_tree().create_timer(pre_attack_timer).timeout;
-		
-		if global_position.distance_to(player.global_position) < ATTACK_DISTANCE:
-			if next_attack > attack_cooldown:
-				next_attack = 0;
-				player.take_damage(attack_damage);
+			if global_position.distance_to(player.global_position) < ATTACK_DISTANCE:
+				if next_attack > attack_cooldown:
+					next_attack = 0;
+					player.take_damage(attack_damage);
+				
+	# Face label at player
+	var direction = Vector3(player.position.x, label.position.y, player.position.z);
+	label.look_at(direction, Vector3.UP);
 		
 func die():
 	Global.decrement_enemy_count();
@@ -73,5 +85,12 @@ func initialize(stats: EnemyStats) -> void:
 	self.move_speed = stats.move_speed;
 	self.score_value = stats.score_value;
 	self.scale = Vector3(stats.size, stats.size, stats.size);
-
 	
+	_spawn_label();
+
+func _spawn_label():
+	label = Label3D.new();
+	add_child(label);
+	
+	label.global_position = global_position + Vector3(0, 3, 0);
+	label.text = "%d | " % current_health + name;
